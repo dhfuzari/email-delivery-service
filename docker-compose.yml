@@ -1,0 +1,11 @@
+version: '3'
+
+services: 
+  db: 
+    image: postgres:9.6
+    environment: 
+      POSTGRES_PASSWORD: p@ssw0rd
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
