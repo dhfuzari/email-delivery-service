@@ -1,8 +1,6 @@
 version: '3'
-
 volumes:
   data_volume:
-
 services: 
   db: 
     image: postgres:9.6
@@ -18,3 +16,11 @@ services:
     image: adminer
     ports:
       - 8080:8080
+  frontend:
+    image: nginx:1.13
+    volumes:
+      # Site
+      - ./web:/usr/share/nginx/html/
+    ports:
+      - 81:80
+    
