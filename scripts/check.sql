@@ -1,3 +1,3 @@
 \l
-\c worker_email_sender
+\c email_sender
 \d emails
