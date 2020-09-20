@@ -58,3 +58,15 @@ services:
     image: redis:3.2
     networks:
       - queue_net
+  worker:
+    image: python:3.6
+    volumes:
+      # Worker volume
+      - ./worker:/worker
+    working_dir: /worker
+    command: bash ./app.sh
+    networks:
+      - queue_net
+    depends_on:
+      - queue
+      - app
