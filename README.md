@@ -35,6 +35,10 @@ run.sh -> Script para verificar se o e-mail foi registrado no banco de dados
 docker-compose up -d
 docker-compose logs exec db psql -U postgres -d email_sender -c 'SELECT * FROM emails'
 
+run.sh -> Script para executar o compose com 3 instancias do container  "worker"
+docker-compose up -d --scale worker=3
+
+
 Obs importante: o arquivo de inicialização do postgres /docker-entrypoint-initdb.d/init.sql só é 
 executa quando o diretório /var/lib/postgresql/data da instancia estiver completamente vazio. Tenha
 em mente que se precisar fazer alguma altração no script de inicialização criado, ele não executará 

@@ -59,12 +59,13 @@ services:
     networks:
       - queue_net
   worker:
-    image: python:3.6
+    # Build a dockerfile image from "worker" folder
+    build: worker
     volumes:
       # Worker volume
       - ./worker:/worker
     working_dir: /worker
-    command: bash ./app.sh
+    command: worker.py
     networks:
       - queue_net
     depends_on:
