@@ -1,21 +1,29 @@
 version: '3'
 volumes:
   data_volume:
+networks:
+  database_net:
+  web_net:
 services: 
   db: 
     image: postgres:9.6
     environment: 
       POSTGRES_PASSWORD: p@ssw0rd
+      POSTGRES_USER: postgres
     volumes:
       # Data volumes
       - data_volume:/var/lib/postgresql/data
       # Scripts
       - ./scripts:/scripts
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - database_net
   adminer:
     image: adminer
     ports:
       - 81:8080
+    networks:
+      - database_net
   frontend:
     image: nginx:1.13
     # depends_on:
@@ -27,6 +35,10 @@ services:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - 80:80
+    networks:
+      - web_net
+    depends_on:
+      - app
   app:
     image: python:3.6
     volumes:
@@ -34,5 +46,8 @@ services:
       - ./app:/app
     working_dir: /app
     command: bash ./app.sh
-    # ports: 
-    #   - 8080:8080
+    networks:
+      - database_net
+      - web_net
+    depends_on:
+      - db
