@@ -38,6 +38,11 @@ docker-compose logs exec db psql -U postgres -d email_sender -c 'SELECT * FROM e
 run.sh -> Script para executar o compose com 3 instancias do container  "worker"
 docker-compose up -d --scale worker=3
 
+run.sh -> Script para levantar 3 instancias do serviço worker e exibit os logs apenas
+dos constiners workers
+docker-compose up -d
+docker-compose scale worker=3
+docker-compose logs -f -t worker
 
 Obs importante: o arquivo de inicialização do postgres /docker-entrypoint-initdb.d/init.sql só é 
 executa quando o diretório /var/lib/postgresql/data da instancia estiver completamente vazio. Tenha
