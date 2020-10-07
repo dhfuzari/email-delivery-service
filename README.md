@@ -1,137 +1,118 @@
 # Email delivery service
 
-## Basic overview
+![alt](./mail-book.png)
 
-Este projeto é composto por 6 serviços(containers) descritos em um arquivo descritor docker-compose.yml que trabalham em conjunto para fazer o envio de mensagens de email, de uma forma que seja possível escalar os serviços conforme necessário.
+## Basic overview
+---
+This project consists of 6 services (containers) described in a `docker-compose.yml` descriptor file that works together to send email messages, in a way that it is possible to scale the services as needed.
 
 ### Imagens individuais:
 
-**db** container - [Imagem Postgres]() - Servidor de banco de dados Postgres para armazenamento das
-mensagens de email enviadas pela aplicação no contianer app
+* **db** container([Postgres](https://hub.docker.com/_/postgres)) - Postgres database server for storing email messages sent by the application in the **app** contianer.
 
-**adminer** container - [Imagem Adminer]() - Serviço para gerencimanento de banco de dados, usado no projeto apenas
-para acompanhamento dos dados armazenados no serviço de Banco de Dados. Este container
-é opcional para o funcionamento dos serviços que compõem o descritor docker-compose.yml e
-serve apenas para acompanhamento dos dados inseridos na tabela de emails
+* **adminer** container([Adminer](https://hub.docker.com/_/adminer)) - Database management service, used in the project only to monitor the databased stored in the **db** service. It's an optional service and it's just for monitoring the inserted data from `emails` table.
 
-**frontend** container - [Imagem Nginx]() - Serviço que expoe na porta 80 um formulário web para preenchimento da
-mensagem de e-mail e que atua como proxy reverso fazendo o roteamento da mensagem no
-POST do formulário para a rota http://localhost/api, que é o serviço descrito na
-Imagem Python(passo 4)
+* **frontend** container([Nginx](https://hub.docker.com/_/nginx)) - A web service that exposes in the door 80 a web form that allows user fill out an email message, and it also acts like a reverse proxy, routing the posted form message to the http://localhost/api route, which is the service described in the **app** container.
 
-**app** container - [Imagem Python]() - É o serviço que recebe a mensagem via POST da aplicação web do container frontend,
-insere a mensagem no Banco de dados criado no container 1, e envia essa mensagem para a fila criada do container queue
+* **app** container([Python](https://hub.docker.com/_/python)) - It's the service that recieves a message via POST from **frontend** container, inserts the message at the **db** container database created earlier, and then send this message to the queue from **queue** container
 
-**queue** container - [Imagem Redis]() que está na mesma rede dos containers 4 e 6. Recebe as mensagens enviadas pelo
-Serviço criado no container app e disponibiliza essa mensagens que são recuperadas pelo container worker que
-faz o disparo dos emails.
+* **queue** container([Redis](https://hub.docker.com/_/redis)) - Recieves the messages created by **app** container, then this messages are available to be retrieved by the **worker** container, which will trigger the emails later.
 
-**worker** container - [Imagem Worker]() - Imagem Python customizada com a instalação do Redis para leitura da fila de mensagens criada 
-anteriormente no serviço do Redis(Container queuec
+* **worker** container([Worker](https://hub.docker.com/_/python)) - A custom Python image with Redis, to read and recieve messages from **queue** container, and then send the email message throught a smtp server. This is the container that could be scaled as soon as needed, using the flag `--scale` as described in the next section "Up and running". 
+
 
 ## Up and running
+---
 
-Clone the repo: 
+1) Clone the repo: `git clone git@github.com:dhfuzari/worker-email-sender.git`
 
-Na pasta raiz do projeto, onde se encontra o arquivio docker-compose.yml, execute o comando: 
-```
-git clone git@github.com:dhfuzari/worker-email-sender.git
-cd worker-email-sender
-```
-Para executar em modo daemon, com apenas umas instância do serviço worker, execute o comando:
-```
-docker-compose up -d
-```
-Se deseja escalar o serviço de email, com mais de um container, passe o numero de container necessários para o container worker:
-```
-docker-compose up -d --scale worker=3
-```
+2) Open the root folder: `cd worker-email-sender`
 
+3) To execute the services in daemon mode, with only one **worker** container instance, run the command:  
+    ```
+    docker-compose up -d
+    ```
+    If you want to scalate the number of **worker** containers, then use the `--scale` flag and assign the number of containers you wish to the containers name. In the example, we'll have 3 **worker** containers working in parallel:
+    ```
+    docker-compose up -d --scale worker=3
+    ```
 
-### Comandos uteis
+4) Navigate to http://localhost:80
 
-Para visualizar os logs de todos os containers em execução, execute o comando:
+5) Fill the form with requested data and click on send 
+
+4) The adminer service used to track email data stored in Postgres is available via the URL http://localhost:81. To authenticate in it, use the followind credentials:
+
+    System: *Postgres*  
+    Server: *localhost*  
+    User: *postgres*  
+    Password: *p@ssw0rd*  
+
+### Useful commands:
+
+To view logs for all running containers: 
 ```
 docker-compose logs -f -t
 ```
 
-Lista todas as base de dados disponíveis no container db criado anteriormente
+List all available databases from **db** container
 ```
 docker-compose exec db psql -U postgres -c '\l'
 ```
 
-Executa o script de verificação check.sql que lista todas as base de dados, alterna a conexão para a base de dados email-sender, e exibe uma descrição da tabela emails
+Run the check.sql script tha list all databases, set the current conexion to `email-sender` database, and displays a complete emails talbes description 
 ```
 docker-compose exec db psql -U postgres -f /scripts/check.sql
 ```
 
-Parar a execução de todos os containers listados no `docker-compose.yml` do diretório atual
+Stop containers services defined in the compose file
 ```
 docker-compose down
 ```
 
-Faz um SELECT em todos os registros da tabela email no banco de dados email-sender no container db
+Performs a SELECT for all records at email's table in the email-sender database, at **db** container
 ```
 docker-compose logs exec db psql -U postgres -d email_sender -c 'SELECT * FROM emails'
 ```
 
-Exibe os logos de um container específico. No exemplo exibe os logs do container worker
+Displays logs information about a specific container. In the example displays logs from **worker** container
 ```
 docker-compose logs -f -t worker
 ```
 
-Obs importante: o arquivo de inicialização do postgres /docker-entrypoint-initdb.d/init.sql só é 
-executa quando o diretório /var/lib/postgresql/data da instancia estiver completamente vazio. Tenha
-em mente que se precisar fazer alguma altração no script de inicialização criado, ele não executará 
-novamente, pois o diretório /var/lib/postgresql/data não estará maia vazio depois da primeira execução
-do container postgres e da execução do arquivo init.sql. Será necessário executar o comando 
-docker-compose down -v para remover os containers e deletar o volume criado anteriormente
-
 ## Configuration
+---
+The volumes and networks are described in `docker-compose.yml` file, each one in it's own service details.
 
-Os volumes e redes configurados estão descritos no prórpio arquivo docker-compose.yml. 
-
-A porta padrão configurada para rodar
-o serviço web no container frontend é a porta 80, portanto para sistemas Windows que possuem o IIS
-habilitado rodando na porta 80 é necessário parar a execução do mesmo, para que a porta 80 seja
-liberada para subir nosso servidor web Nginx 
-Para isso, execute o seguinte comando para parar a execução do serviço de internet no windows
+The default setup to run the web service in the **frontend** container is the door 80, therefore for Microsoft Windows system with IIS up and running at door 80, it'll be
+necessary to stop it's execution, to release the door 80 to our Nginx container. To achieve this, you need to run the following command:
+```
 iisreset /stop
+```
+
+Important note: The initialization Postgres file `/docker-entrypoint-initdb.d/init.sql` is executed only when the path `/var/lib/postgresql/data` from instance is completely empty. Keep in mind that if you need to update the initialization script created earlier, it'll not execute again with the new update, because the path `/var/lib/postgresql/data` is no longer empty after the first **db** container execution, and after the `init.sql` file execution. It's necessary execute the following comand to remove containers and delete the volume created earlier:
+```
+docker-compose down -v
+```
 
 If necessary override some values, update then in `docker-compose.override.yml`
 
-## Usage
+Environment variables:
 
-Para iniciar o serviço com todos os containers, na pasta raiz do projeto execute o comando:
-
-
-
-
-O serviço do adminer utilizado para acompanhamento dos dados inseridos no postgre pode está disponível atravéz da URL 
-http://localhost:81. Os dados para acesso da instacia do Postgre criada no container adminer são:
-
-System: Postgres
-Server: localhost
-User: postgres
-Password: p@ssw0rd
-
-
-## Authors and acknowledgment
-
+* `DB_HOST=db`
+* `DB_USER=postgres`
+* `DB_PASSWORD=p@ssw0rd`
+* `DB_NAME=email_sender`
+* `REDIS_HOST=queue`
+ 
 ## Project status
-
-O projeto implementa todas as funcionalidades, porém não possui um servidor de smpt configurado e o envio do email está sendo simulado por uma 
-função que implementa um temporizador randômico que faz a simulação da funcionalidade.
+---
+The project implements all funcionallities, however it doesn't have an smtp server configured, so the sending of the email is being simulated by a function tha implements a random timer that mimic the email delivery. 
 
 ## Contributing
+---
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-Please make sure to update tests as appropriate.
-
 ## License
+---
 [MIT](https://choosealicense.com/licenses/mit/)
-
-
-
-
-
