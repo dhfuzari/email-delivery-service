@@ -1,12 +1,33 @@
-# Email delivery service
+<h1 align="center">
+  <img src="./delivery-airmail.png" alt="Email delivery service" width="300">
+  <br><br>
+  Email delivery service
+</h1>
 
-![alt](./mail-book.png)
+<div align="center">
+    <table>
+        <tr>
+            <td>Don't forget to :star: this repo so you can keep up to date on any daily progress!</td>
+            <td>
+                <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/dhfuzari/email-delivery-service">
+                <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/dhfuzari/email-delivery-service">
+            </td>
+        </tr>  
+    </table>
+    <div>
+    <img src="https://forthebadge.com/images/badges/made-with-python.svg" />
+    <img src="https://forthebadge.com/images/badges/built-with-love.svg" />
+    <img src="https://forthebadge.com/images/badges/uses-html.svg" />
+    <img src="https://forthebadge.com/images/badges/powered-by-coffee.svg" />
+    </div>
+    <br>
+</div>
 
 ## Basic overview
 
 This project consists of 6 services (containers) described in a `docker-compose.yml` descriptor file that works together to send email messages, in a way that it is possible to scale the services as needed.
 
-### Imagens individuais:
+### Individual images:
 
 * **db** container([Postgres](https://hub.docker.com/_/postgres)) - Postgres database server for storing email messages sent by the application in the **app** contianer.
 
