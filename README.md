@@ -3,7 +3,7 @@
 ![alt](./mail-book.png)
 
 ## Basic overview
----
+
 This project consists of 6 services (containers) described in a `docker-compose.yml` descriptor file that works together to send email messages, in a way that it is possible to scale the services as needed.
 
 ### Imagens individuais:
@@ -22,7 +22,6 @@ This project consists of 6 services (containers) described in a `docker-compose.
 
 
 ## Up and running
----
 
 1) Clone the repo: `git clone git@github.com:dhfuzari/worker-email-sender.git`
 
@@ -81,7 +80,7 @@ docker-compose logs -f -t worker
 ```
 
 ## Configuration
----
+
 The volumes and networks are described in `docker-compose.yml` file, each one in it's own service details.
 
 The default setup to run the web service in the **frontend** container is the door 80, therefore for Microsoft Windows system with IIS up and running at door 80, it'll be
@@ -106,13 +105,13 @@ Environment variables:
 * `REDIS_HOST=queue`
  
 ## Project status
----
+
 The project implements all funcionallities, however it doesn't have an smtp server configured, so the sending of the email is being simulated by a function tha implements a random timer that mimic the email delivery. 
 
 ## Contributing
----
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
----
+
 [MIT](https://choosealicense.com/licenses/mit/)
