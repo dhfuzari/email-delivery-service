@@ -5,21 +5,12 @@
 </h1>
 
 <div align="center">
-    <table>
-        <tr>
-            <td>Don't forget to :star: this repo so you can keep up to date on any daily progress!</td>
-            <td>
-                <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/dhfuzari/email-delivery-service">
-                <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/dhfuzari/email-delivery-service">
-            </td>
-        </tr>  
-    </table>
-    <div>
+    <p>Don't forget to :star: this repo so you can keep up to date on any daily progress!</p>
     <img src="https://forthebadge.com/images/badges/made-with-python.svg" />
     <img src="https://forthebadge.com/images/badges/built-with-love.svg" />
     <img src="https://forthebadge.com/images/badges/uses-html.svg" />
     <img src="https://forthebadge.com/images/badges/powered-by-coffee.svg" />
-    </div>
+    <br>
     <br>
 </div>
 
