@@ -23,9 +23,9 @@ This project consists of 6 services (containers) described in a `docker-compose.
 
 ## Up and running
 
-1) Clone the repo: `git clone git@github.com:dhfuzari/worker-email-sender.git`
+1) Clone the repo: `git clone git@github.com:dhfuzari/email-delivery-service.git` 
 
-2) Open the root folder: `cd worker-email-sender`
+2) Open the root folder: `cd email-delivery-service`
 
 3) To execute the services in daemon mode, with only one **worker** container instance, run the command:  
     ```
