@@ -27,8 +27,6 @@ services:
       - database_net
   frontend:
     image: nginx:1.13
-    # depends_on:
-    #   - app
     volumes:
       # Site
       - ./web:/usr/share/nginx/html/
@@ -75,6 +73,8 @@ services:
       - queue_net
     environment:
       - REDIS_HOST=queue
+      - SMTP_USER=xpto
+      - SMTP_PASSWORD=xpto
     depends_on:
     - queue
     - app

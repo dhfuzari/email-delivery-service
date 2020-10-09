@@ -10,3 +10,5 @@ services:
   worker:
     environment:
       - REDIS_HOST=queue
+      - SMTP_USER=xpto
+      - SMTP_PASSWORD=xpto
