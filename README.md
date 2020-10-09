@@ -35,9 +35,11 @@ This project consists of 6 services (containers) described in a `docker-compose.
 
 ## Up and running
 
-1) Clone the repo: `git clone git@github.com:dhfuzari/email-delivery-service.git` 
+1) First of all, clone the repo: `git clone git@github.com:dhfuzari/email-delivery-service.git` 
 
-2) Open the root folder: `cd email-delivery-service`
+2) Next, open the root folder: `cd email-delivery-service`
+
+2) Then, before to start, you must to create a [mailtrap](https://mailtrap.io) account and replace the current environment `xpto` variables values from `SMTP_USER` and `SMTP_PASSWORD` at `docker-compose.override.yml` file, with the new values created at [mailtrap](https://mailtrap.io). `xpto` isn't a valid mailtrap user and isn't even a valid mailtrap password. Now, you're almost ready to go.
 
 3) To execute the services in daemon mode, with only one **worker** container instance, run the command:  
     ```
@@ -93,18 +95,18 @@ docker-compose logs -f -t worker
 
 ## Configuration
 
-The volumes and networks are described in `docker-compose.yml` file, each one in it's own service details.
-
-The default setup to run the web service in the **frontend** container is the door 80, therefore for Microsoft Windows system with IIS up and running at door 80, it'll be
-necessary to stop it's execution, to release the door 80 to our Nginx container. To achieve this, you need to run the following command:
+Important note for windows users: The default setup to run the web service in the **frontend** container is the door 80, therefore for Microsoft Windows system with IIS up and running at door 80, it'll be
+necessary to stop it's execution, to release the door 80 to our Nginx container. To achieve this, open powershell as admin, and run the following command:
 ```
 iisreset /stop
 ```
 
-Important note: The initialization Postgres file `/docker-entrypoint-initdb.d/init.sql` is executed only when the path `/var/lib/postgresql/data` from instance is completely empty. Keep in mind that if you need to update the initialization script created earlier, it'll not execute again with the new update, because the path `/var/lib/postgresql/data` is no longer empty after the first **db** container execution, and after the `init.sql` file execution. It's necessary execute the following comand to remove containers and delete the volume created earlier:
+Important note if you need to change database structure: The initialization Postgres file `/docker-entrypoint-initdb.d/init.sql` is executed only when the path `/var/lib/postgresql/data` from instance is completely empty. Keep in mind that if you need to update the initialization script created earlier, it'll not execute again with the new update, because the path `/var/lib/postgresql/data` is no longer empty after the first **db** container execution, and after the `init.sql` file execution. It's necessary execute the following comand to remove containers and delete the volume created earlier:
 ```
 docker-compose down -v
 ```
+
+The volumes and networks are described in `docker-compose.yml` file, each one in it's own service details.
 
 If necessary override some values, update then in `docker-compose.override.yml`
 
@@ -115,6 +117,8 @@ Environment variables:
 * `DB_PASSWORD=p@ssw0rd`
 * `DB_NAME=email_sender`
 * `REDIS_HOST=queue`
+* `SMTP_USER=xpto`
+* `SMTP_PASSWORD=xpto`
  
 ## Project status
 
