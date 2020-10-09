@@ -20,24 +20,22 @@ class Sender(Bottle):
 
         self.conn = psycopg2.connect(dsn)
 
-    def register_mensage(self, assunto, mensagem):
-        SQL = 'INSERT INTO emails(assunto, mensagem) VALUES(%s, %s)'
+    def register_mensage(self, subject, message):
+        SQL = 'INSERT INTO emails(subject, message) VALUES(%s, %s)'
         cur = self.conn.cursor()
-        cur.execute(SQL, (assunto, mensagem))
+        cur.execute(SQL, (subject, message))
         self.conn.commit()
         cur.close()
         
         # Send mensage to redis
-        msg = { 'assunto': assunto, 'mensagem': mensagem }
+        msg = { 'subject': subject, 'message': message }
         self.redisQueue.rpush('sender', json.dumps(msg))
 
-        print('Mensagem registrada no SQL e no Redis')
-
     def send(self):
-        assunto = request.forms.get('assunto')
-        mensagem = request.forms.get('mensagem')
-        self.register_mensage(assunto, mensagem)
-        return 'Mensagem enfileirada! Assunto: {} Mensagem: {}'.format(assunto, mensagem)
+        subject = request.forms.get('subject')
+        message = request.forms.get('message')
+        self.register_mensage(subject, message)
+        return 'Message on queue! Subject: {} Message: {}'.format(subject, message)
 
 if __name__ == '__main__':
     sender = Sender()
