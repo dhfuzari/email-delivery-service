@@ -120,10 +120,6 @@ Environment variables:
 * `SMTP_USER=xpto`
 * `SMTP_PASSWORD=xpto`
  
-## Project status
-
-The project implements all funcionallities, however it doesn't have an smtp server configured, so the sending of the email is being simulated by a function tha implements a random timer that mimic the email delivery. 
-
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
