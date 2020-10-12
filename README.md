@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./delivery-airmail.png" alt="Email delivery service" width="300">
+  <img src="./assets/img/delivery-airmail.png" alt="Email delivery service" width="300">
   <br><br>
   Email delivery service
 </h1>
